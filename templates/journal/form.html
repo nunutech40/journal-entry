@@ -1,0 +1,159 @@
+{{define "title"}}{{if .IsEdit}}Edit Jurnal{{else}}Buat Jurnal{{end}}{{end}}
+{{define "nav_journals"}}l-sidebar__link--active{{end}}
+
+{{define "content"}}
+<div class="journal-form" x-data='{
+        lines: {{if and .IsEdit .Entry}}[
+            {{range $i, $line := .Entry.Lines}}
+            {{if $i}},{{end}}
+            { accountId: "{{$line.AccountID}}", description: "{{$line.Description}}", debit: {{if gt $line.Debit 0}}{{printf "%.0f" $line.Debit}}{{else}}""{{end}}, credit: {{if gt $line.Credit 0}}{{printf "%.0f" $line.Credit}}{{else}}""{{end}} }
+            {{end}}
+        ]{{else}}[
+            { accountId: "", description: "", debit: "", credit: "" },
+            { accountId: "", description: "", debit: "", credit: "" }
+        ]{{end}},
+        get totalDebit() {
+            return this.lines.reduce((sum, l) => sum + (parseFloat(l.debit) || 0), 0);
+        },
+        get totalCredit() {
+            return this.lines.reduce((sum, l) => sum + (parseFloat(l.credit) || 0), 0);
+        },
+        get difference() {
+            return this.totalDebit - this.totalCredit;
+        },
+        get isBalanced() {
+            return Math.abs(this.difference) < 0.01 && this.totalDebit > 0;
+        },
+        addLine() {
+            this.lines.push({ accountId: "", description: "", debit: "", credit: "" });
+        },
+        removeLine(index) {
+            if (this.lines.length > 2) {
+                this.lines.splice(index, 1);
+            }
+        },
+        formatNumber(n) {
+            if (!n || n === 0) return "0";
+            return new Intl.NumberFormat("id-ID").format(n);
+        }
+    }'>
+    <div class="page-header">
+        <h1 class="page-header__title">{{if .IsEdit}}Edit Jurnal{{else}}Buat Jurnal Baru{{end}}</h1>
+        <div class="page-header__actions">
+            <a href="/journals" class="c-btn c-btn--secondary">← Kembali</a>
+        </div>
+    </div>
+
+    {{if .Error}}
+    <div class="c-alert c-alert--error">{{.Error}}</div>
+    {{end}}
+
+    <div class="journal-form__card">
+        <form {{if .IsEdit}} hx-put="/journals/{{.Entry.ID}}" {{else}} hx-post="/journals" {{end}} hx-target="body"
+            hx-swap="innerHTML">
+            <!-- Header Fields -->
+            <div class="journal-form__header-fields">
+                <div class="c-form-field">
+                    <label class="c-form-field__label" for="entry_date">Tanggal *</label>
+                    <input type="date" id="entry_date" name="entry_date" class="c-form-field__input"
+                        value="{{if and .IsEdit .Entry}}{{.Entry.FormatDate}}{{end}}" required>
+                </div>
+                <div class="c-form-field">
+                    <label class="c-form-field__label" for="description">Keterangan *</label>
+                    <input type="text" id="description" name="description" class="c-form-field__input"
+                        placeholder="Contoh: Penjualan tunai"
+                        value="{{if and .IsEdit .Entry}}{{.Entry.Description}}{{end}}" required>
+                </div>
+                <div class="c-form-field">
+                    <label class="c-form-field__label" for="reference_number">No. Referensi</label>
+                    <input type="text" id="reference_number" name="reference_number" class="c-form-field__input"
+                        placeholder="Opsional" value="{{if and .IsEdit .Entry}}{{.Entry.ReferenceNumber}}{{end}}">
+                </div>
+            </div>
+
+            <!-- Entry Lines -->
+            <div class="journal-form__lines-section">
+                <div class="journal-form__lines-header">
+                    <h3>Baris Entri</h3>
+                    <button type="button" class="c-btn c-btn--secondary c-btn--sm" @click="addLine()">
+                        + Tambah Baris
+                    </button>
+                </div>
+
+                <div class="c-table-wrap">
+                    <table class="c-table journal-form__lines-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Akun</th>
+                                <th style="width: 20%;">Keterangan</th>
+                                <th class="c-table__num" style="width: 20%;">Debit</th>
+                                <th class="c-table__num" style="width: 20%;">Kredit</th>
+                                <th style="width: 10%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="(line, index) in lines" :key="index">
+                                <tr>
+                                    <td>
+                                        <select :name="'line_account_id[]'" x-model="line.accountId"
+                                            class="c-form-field__select" required>
+                                            <option value="">— Pilih Akun —</option>
+                                            {{range .Accounts}}
+                                            <option value="{{.ID}}">{{.Code}} — {{.Name}}</option>
+                                            {{end}}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" :name="'line_description[]'" x-model="line.description"
+                                            class="c-form-field__input" placeholder="Opsional">
+                                    </td>
+                                    <td>
+                                        <input type="number" :name="'line_debit[]'" x-model="line.debit"
+                                            class="c-form-field__input c-table__num" placeholder="0" min="0" step="1"
+                                            @focus="if(line.credit > 0) line.debit = ''">
+                                    </td>
+                                    <td>
+                                        <input type="number" :name="'line_credit[]'" x-model="line.credit"
+                                            class="c-form-field__input c-table__num" placeholder="0" min="0" step="1"
+                                            @focus="if(line.debit > 0) line.credit = ''">
+                                    </td>
+                                    <td>
+                                        <button type="button" class="c-btn c-btn--ghost c-btn--sm"
+                                            style="color: var(--color-error);" @click="removeLine(index)"
+                                            :disabled="lines.length <= 2">✕</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                        <tfoot>
+                            <tr class="journal-form__totals">
+                                <td colspan="2" style="text-align: right; font-weight: 600;">Total</td>
+                                <td class="c-table__num" style="font-weight: 700;" x-text="formatNumber(totalDebit)">
+                                </td>
+                                <td class="c-table__num" style="font-weight: 700;" x-text="formatNumber(totalCredit)">
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="text-align: right; font-weight: 600;">Selisih</td>
+                                <td colspan="2" class="c-table__num"
+                                    :class="isBalanced ? 'journal-form__balanced' : 'journal-form__unbalanced'"
+                                    x-text="isBalanced ? '✓ Seimbang' : formatNumber(Math.abs(difference))"></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="journal-form__actions">
+                <button type="submit" class="c-btn c-btn--primary" :disabled="!isBalanced"
+                    :class="{ 'c-btn--disabled': !isBalanced }">{{if .IsEdit}}Simpan Perubahan{{else}}Simpan
+                    Jurnal{{end}}</button>
+                <a href="/journals" class="c-btn c-btn--secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}

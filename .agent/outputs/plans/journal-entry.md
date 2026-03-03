@@ -1,11 +1,11 @@
 ---
 topic: Journal Entry Web App — Go + HTMX + Alpine.js
 date: 2026-03-03
-version: 4
+version: 5
 status: in-progress
 research: ../research/journal-entry.md
 phases_total: 7
-phases_completed: 3
+phases_completed: 4
 ---
 
 # Plan: Journal Entry Web App
@@ -189,7 +189,7 @@ Web app yang bisa:
 
 ## Phase 4: Journal Entry (CRUD + Double-Entry Validation)
 
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 **Goal:** User bisa buat, lihat, edit, hapus journal entry. Validasi debit == kredit. Dynamic lines via HTMX + Alpine.js.
 
@@ -198,20 +198,20 @@ Web app yang bisa:
 > - 4b: Handler + Templates (presentation layer)
 
 **Files:**
-- [ ] `internal/journal/model.go` — JournalEntry, EntryLine structs, CreateRequest
-- [ ] `internal/journal/repository.go` — Repository interface + pgx (DB transactions untuk atomicity)
-- [ ] `internal/journal/service.go` — Service interface + implementation
-- [ ] `internal/journal/handler.go` — HandleList, HandleCreateForm, HandleCreate, HandleEdit, HandleUpdate, HandleDelete, HandleAddLine
-- [ ] `internal/journal/service_test.go` — Unit test: debit==credit validation, edge cases
-- [ ] `templates/journal/list.html` — Full page: journal entry list
-- [ ] `templates/journal/form.html` — Full page: form dengan dynamic debit/kredit lines
-- [ ] `templates/journal/_row.html` — Partial: single journal row
-- [ ] `templates/journal/_entry_line.html` — Partial: single debit/kredit line (HTMX add)
-- [ ] Update `internal/server/routes.go` — Register /journals routes
-- [ ] Update `cmd/web/main.go` — Wire journal DI (journal repo depends on account repo interface)
-- [ ] Update `templates/layout/base.html` — Sidebar: link "Jurnal"
-- [ ] Update `static/css/style.css` — .journal-* styles
-- [ ] Update `static/js/app.js` — Alpine.js: live balance calculation
+- [x] `internal/journal/model.go` — JournalEntry, EntryLine, CreateRequest, UpdateRequest, FormatDate
+- [x] `internal/journal/repository.go` — pgx with DB transactions (Create/Update atomic), GetAll with SUM JOIN, GetByID with account JOIN
+- [x] `internal/journal/service.go` — Validation: date, description, min 2 lines, debit XOR credit per line, account exists, SUM balanced (float tolerance)
+- [x] `internal/journal/handler.go` — CRUD handlers + parseFormToRequest (array fields), friendlyError, account dropdown data
+- [x] `internal/journal/service_test.go` — 10 unit tests (mock repo for both journal + account)
+- [x] `templates/journal/list.html` — Journal list with date format, totals, HTMX delete
+- [x] `templates/journal/form.html` — Alpine.js dynamic form: add/remove lines, live totals, balance check, disabled submit
+- [ ] `templates/journal/_row.html` — Skipped (using full page reload via HX-Redirect)
+- [ ] `templates/journal/_entry_line.html` — Skipped (using Alpine x-for instead of HTMX partial)
+- [x] Update `internal/server/routes.go` — Register /journals routes + journal templates
+- [x] Update `cmd/web/main.go` — Wire: journalRepo → journalSvc(+accountRepo) → journalHandler(+accountSvc)
+- [x] Update `templates/layout/base.html` — Already had sidebar links
+- [x] Update `static/css/style.css` — Added .journal-form-* styles
+- [ ] Update `static/js/app.js` — Not needed, Alpine.js inline handles calculation
 
 **Steps:**
 1. Buat model.go: JournalEntry (header) + EntryLine (lines) + request types
@@ -241,23 +241,24 @@ Web app yang bisa:
 **Success Criteria:**
 
 #### Automated Verification:
-- [ ] `go build ./cmd/web/` — berhasil
-- [ ] `go test ./internal/journal/...` — pass
-- [ ] Test: debit ≠ credit → error returned
-- [ ] Test: single line → error returned
-- [ ] Test: line with debit AND credit → error returned
-- [ ] Test: valid entry (2+ lines, balanced) → success
+- [x] `go build ./cmd/web/` — berhasil
+- [x] `go test ./internal/journal/...` — 10 tests pass
+- [x] `go test ./...` — all 21 tests pass (11 account + 10 journal)
+- [x] Test: debit ≠ credit → error returned
+- [x] Test: single line → error returned
+- [x] Test: line with debit AND credit → error returned
+- [x] Test: valid entry (2+ lines, balanced) → success
 
 #### Manual Verification:
-- [ ] Buka /journals → list jurnal tampil
-- [ ] Buat jurnal baru → form dengan dynamic lines
-- [ ] Tambah baris: klik "Tambah Baris" → line baru muncul (HTMX, no reload)
-- [ ] Account dropdown: pilih akun → akun terpilih
-- [ ] Live balance: Alpine.js hitung total debit, total kredit, selisih secara realtime
-- [ ] Submit dengan selisih ≠ 0 → error message (HTMX swap ke error container)
+- [x] Buka /journals → list jurnal tampil (empty state)
+- [x] Buat jurnal baru → form dengan dynamic lines tampil
+- [x] Tambah baris: klik "Tambah Baris" → line baru muncul (Alpine.js, no reload)
+- [x] Account dropdown: pilih akun → akun terpilih
+- [x] Live balance: Alpine.js hitung total debit, total kredit, selisih secara realtime
+- [ ] Submit dengan selisih ≠ 0 → error message (button disabled)
 - [ ] Submit balanced → sukses, redirect ke list, toast tampil
 - [ ] Edit jurnal → form pre-filled dengan existing lines
-- [ ] Hapus jurnal → modal konfirmasi → jurnal hilang dari list
+- [ ] Hapus jurnal → confirm dialog → jurnal hilang dari list
 
 **⏸️ Pause untuk manual verification sebelum lanjut.**
 
@@ -434,6 +435,7 @@ Web app yang bisa:
 - 2026-03-03 — Phase 1 completed. 15 files dibuat, build berhasil. PostgreSQL belum tersedia (perlu start OrbStack/Docker). Manual verification pending.
 - 2026-03-03 — Phase 2 completed. 3 migration files + 1 seed file. Tambah DB-level constraint (debit XOR credit). Manual verification done.
 - 2026-03-03 — Phase 3 completed. Account CRUD: 5 Go files + 2 templates + CSS. 11 unit tests pass. List + form pages render. Manual testing untuk HTMX CRUD flow masih pending user test.
+- 2026-03-03 — Phase 4 completed. Journal Entry CRUD: 5 Go files + 2 templates + CSS. 10 unit tests (21 total). DB transactions for atomic create/update. Alpine.js dynamic form with live balance calculation. Cross-module validation (account exists). Manual CRUD testing pending.
 
 ---
 
@@ -441,6 +443,7 @@ Web app yang bisa:
 
 | Versi | Tanggal    | Perubahan |
 |-------|------------|-----------|
+| v5    | 2026-03-03 | Phase 4 completed, journal CRUD, 21 total tests |
 | v4    | 2026-03-03 | Phase 3 completed, account CRUD, 11 tests pass |
 | v3    | 2026-03-03 | Phase 2 completed, migrations + seed created |
 | v2    | 2026-03-03 | Phase 1 completed, all files created, build pass |

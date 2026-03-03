@@ -1,0 +1,53 @@
+{{define "title"}}Daftar Jurnal{{end}}
+{{define "nav_journals"}}l-sidebar__link--active{{end}}
+
+{{define "content"}}
+<div class="journal-list">
+    <div class="page-header">
+        <h1 class="page-header__title">Daftar Jurnal</h1>
+        <div class="page-header__actions">
+            <a href="/journals/new" class="c-btn c-btn--primary">+ Buat Jurnal</a>
+        </div>
+    </div>
+
+    {{if .Entries}}
+    <div class="c-table-wrap">
+        <table class="c-table" id="journal-table">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Keterangan</th>
+                    <th>Ref</th>
+                    <th class="c-table__num">Debit</th>
+                    <th class="c-table__num">Kredit</th>
+                    <th class="c-table__actions">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Entries}}
+                <tr id="journal-row-{{.ID}}">
+                    <td>{{.EntryDate.Format "02/01/2006"}}</td>
+                    <td><strong>{{.Description}}</strong></td>
+                    <td><code>{{.ReferenceNumber}}</code></td>
+                    <td class="c-table__num">{{printf "%,.0f" .TotalDebit}}</td>
+                    <td class="c-table__num">{{printf "%,.0f" .TotalCredit}}</td>
+                    <td class="c-table__actions">
+                        <a href="/journals/{{.ID}}/edit" class="c-btn c-btn--ghost c-btn--sm">Edit</a>
+                        <button class="c-btn c-btn--ghost c-btn--sm" style="color: var(--color-error);"
+                            hx-delete="/journals/{{.ID}}" hx-target="#journal-row-{{.ID}}" hx-swap="outerHTML swap:0.3s"
+                            hx-confirm="Yakin ingin menghapus jurnal ini?">Hapus</button>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+    {{else}}
+    <div class="c-empty-state">
+        <div class="c-empty-state__icon">📝</div>
+        <p class="c-empty-state__text">Belum ada jurnal. Buat jurnal pertama Anda!</p>
+        <a href="/journals/new" class="c-btn c-btn--primary">+ Buat Jurnal</a>
+    </div>
+    {{end}}
+</div>
+{{end}}
