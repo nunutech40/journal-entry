@@ -910,6 +910,50 @@ code {
 
 
 /* ============================================
+   FEATURE: Reports
+   ============================================ */
+.report-filter {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.report-filter__form {
+    display: grid;
+    grid-template-columns: 1fr 160px 160px auto;
+    gap: var(--space-4);
+    align-items: end;
+}
+
+.report-filter__actions {
+    display: flex;
+    align-items: flex-end;
+}
+
+.report-header {
+    margin-bottom: var(--space-4);
+}
+
+.report-header__info h2 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-1);
+}
+
+.report-header__period {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.report-total-row td {
+    background: var(--color-bg-tertiary);
+    border-top: 2px solid var(--color-border-light);
+}
+
+
+/* ============================================
    RESPONSIVE
    ============================================ */
 @media (max-width: 768px) {

@@ -1,11 +1,11 @@
 ---
 topic: Journal Entry Web App — Go + HTMX + Alpine.js
 date: 2026-03-03
-version: 5
+version: 6
 status: in-progress
 research: ../research/journal-entry.md
 phases_total: 7
-phases_completed: 4
+phases_completed: 5
 ---
 
 # Plan: Journal Entry Web App
@@ -266,21 +266,21 @@ Web app yang bisa:
 
 ## Phase 5: General Ledger & Trial Balance
 
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 **Goal:** User bisa lihat buku besar per akun dan neraca saldo seluruh akun.
 
 **Files:**
-- [ ] `internal/report/model.go` — LedgerEntry, TrialBalanceRow structs
-- [ ] `internal/report/repository.go` — Aggregate queries (SUM, GROUP BY)
-- [ ] `internal/report/service.go` — Filter, format, running balance calculation
-- [ ] `internal/report/handler.go` — HandleLedger, HandleTrialBalance
-- [ ] `templates/report/ledger.html` — Full page: buku besar (filter account + date range)
-- [ ] `templates/report/trial_balance.html` — Full page: neraca saldo (semua akun)
-- [ ] Update `internal/server/routes.go` — Register /reports routes
-- [ ] Update `cmd/web/main.go` — Wire report DI
-- [ ] Update `templates/layout/base.html` — Sidebar: links "Buku Besar", "Neraca Saldo"
-- [ ] Update `static/css/style.css` — .report-* styles
+- [x] `internal/report/model.go` — LedgerEntry (running balance), LedgerReport, TrialBalanceRow, TrialBalance
+- [x] `internal/report/repository.go` — GetLedger (JOIN entry_lines+journal_entries, date filter), GetTrialBalance (LEFT JOIN SUM GROUP BY)
+- [x] `internal/report/service.go` — Running balance (debit-normal vs credit-normal), date range defaults, balanced check
+- [x] `internal/report/handler.go` — HandleLedger (filter params), HandleTrialBalance (type labels)
+- [x] `templates/report/ledger.html` — Filter form + entry table + totals + empty states
+- [x] `templates/report/trial_balance.html` — All accounts + totals + balanced status badge
+- [x] Update `internal/server/routes.go` — Register /reports routes + report templates + fmtNum/gtf template funcs
+- [x] Update `cmd/web/main.go` — Wire: reportRepo → reportSvc(+accountRepo) → reportHandler(+accountSvc)
+- [x] Update `templates/layout/base.html` — Already had sidebar links
+- [x] Update `static/css/style.css` — Added .report-filter, .report-header, .report-total-row styles
 
 **Steps:**
 1. Buat model.go: LedgerEntry (date, ref, desc, debit, credit, balance), TrialBalanceRow (account code, name, type, debit_sum, credit_sum)
@@ -295,16 +295,18 @@ Web app yang bisa:
 **Success Criteria:**
 
 #### Automated Verification:
-- [ ] `go build ./cmd/web/` — berhasil
-- [ ] `go test ./internal/report/...` — pass (kalau ada)
+- [x] `go build ./cmd/web/` — berhasil
+- [x] `go test ./...` — 21 tests pass (report has no unit tests, read-only queries)
 
 #### Manual Verification:
+- [x] Buku Besar: filter form renders (akun dropdown, date range)
 - [ ] Buku Besar: pilih akun → semua transaksi tampil dengan running balance
 - [ ] Buku Besar: filter tanggal → data ter-filter
-- [ ] Neraca Saldo: semua akun tampil dengan total debit & kredit
-- [ ] Neraca Saldo: baris total di bawah → total debit == total kredit
-- [ ] Angka: format ribuan (1.000.000) benar, desimal (,00) benar
-- [ ] Empty state: kalau belum ada transaksi, tampilkan pesan yang jelas
+- [x] Neraca Saldo: semua 27 akun tampil dengan type badges
+- [x] Neraca Saldo: baris total di bawah → total debit == total kredit (0 = 0)
+- [x] Neraca Saldo: status badge ✓ Seimbang
+- [x] Angka: format number via fmtNum (Indonesian thousand separator)
+- [x] Empty state: "Pilih akun" prompt saat belum filter
 
 **⏸️ Pause untuk manual verification sebelum lanjut.**
 
@@ -436,6 +438,7 @@ Web app yang bisa:
 - 2026-03-03 — Phase 2 completed. 3 migration files + 1 seed file. Tambah DB-level constraint (debit XOR credit). Manual verification done.
 - 2026-03-03 — Phase 3 completed. Account CRUD: 5 Go files + 2 templates + CSS. 11 unit tests pass. List + form pages render. Manual testing untuk HTMX CRUD flow masih pending user test.
 - 2026-03-03 — Phase 4 completed. Journal Entry CRUD: 5 Go files + 2 templates + CSS. 10 unit tests (21 total). DB transactions for atomic create/update. Alpine.js dynamic form with live balance calculation. Cross-module validation (account exists). Manual CRUD testing pending.
+- 2026-03-03 — Phase 5 completed. Reports: 4 Go files + 2 templates + CSS. Ledger (filter + running balance) + Trial Balance (all accounts + totals + balanced badge). Bug fix: Go template `gt` incompatible types → added `gtf` func; `printf %,.0f` → added `fmtNum` func.
 
 ---
 
@@ -443,6 +446,7 @@ Web app yang bisa:
 
 | Versi | Tanggal    | Perubahan |
 |-------|------------|-----------|
+| v6    | 2026-03-03 | Phase 5 completed, reports (ledger + trial balance), template funcs |
 | v5    | 2026-03-03 | Phase 4 completed, journal CRUD, 21 total tests |
 | v4    | 2026-03-03 | Phase 3 completed, account CRUD, 11 tests pass |
 | v3    | 2026-03-03 | Phase 2 completed, migrations + seed created |

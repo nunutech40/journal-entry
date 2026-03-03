@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -11,11 +12,12 @@ import (
 
 	"journal-entry/internal/account"
 	"journal-entry/internal/journal"
+	"journal-entry/internal/report"
 	"journal-entry/internal/shared/middleware"
 )
 
 // NewRouter creates and configures the chi router with all routes.
-func NewRouter(templates map[string]*template.Template, accountHandler *account.Handler, journalHandler *journal.Handler) http.Handler {
+func NewRouter(templates map[string]*template.Template, accountHandler *account.Handler, journalHandler *journal.Handler, reportHandler *report.Handler) http.Handler {
 	r := chi.NewRouter()
 
 	// Global middleware
@@ -50,8 +52,8 @@ func NewRouter(templates map[string]*template.Template, accountHandler *account.
 	// Journal routes
 	journalHandler.RegisterRoutes(r)
 
-	// Future routes:
-	// reportHandler.RegisterRoutes(r)
+	// Report routes
+	reportHandler.RegisterRoutes(r)
 
 	return r
 }
@@ -80,9 +82,8 @@ func ParseTemplates() map[string]*template.Template {
 		"templates/account/form.html",
 		"templates/journal/list.html",
 		"templates/journal/form.html",
-		// Future pages:
-		// "templates/report/ledger.html",
-		// "templates/report/trial_balance.html",
+		"templates/report/ledger.html",
+		"templates/report/trial_balance.html",
 	}
 
 	funcMap := template.FuncMap{
@@ -91,6 +92,31 @@ func ParseTemplates() map[string]*template.Template {
 				return "l-sidebar__link--active"
 			}
 			return ""
+		},
+		// fmtNum formats a float64 as an integer with dot thousand separators (Indonesian format)
+		"fmtNum": func(n float64) string {
+			isNeg := n < 0
+			if isNeg {
+				n = -n
+			}
+			intPart := int64(n + 0.5)
+			s := fmt.Sprintf("%d", intPart)
+			// Add dots every 3 digits from right
+			out := make([]byte, 0, len(s)+len(s)/3)
+			for i, c := range s {
+				if i > 0 && (len(s)-i)%3 == 0 {
+					out = append(out, '.')
+				}
+				out = append(out, byte(c))
+			}
+			if isNeg {
+				return "-" + string(out)
+			}
+			return string(out)
+		},
+		// gtf compares float64 > 0
+		"gtf": func(n float64) bool {
+			return n > 0
 		},
 	}
 

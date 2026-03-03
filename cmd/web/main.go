@@ -12,6 +12,7 @@ import (
 
 	"journal-entry/internal/account"
 	"journal-entry/internal/journal"
+	"journal-entry/internal/report"
 	"journal-entry/internal/server"
 )
 
@@ -41,8 +42,12 @@ func main() {
 	journalSvc := journal.NewService(journalRepo, accountRepo)
 	journalHandler := journal.NewHandler(journalSvc, accountSvc, templates)
 
+	reportRepo := report.NewRepository(pool)
+	reportSvc := report.NewService(reportRepo, accountRepo)
+	reportHandler := report.NewHandler(reportSvc, accountSvc, templates)
+
 	// Create router with all routes
-	router := server.NewRouter(templates, accountHandler, journalHandler)
+	router := server.NewRouter(templates, accountHandler, journalHandler, reportHandler)
 
 	// Get port from env
 	port := os.Getenv("APP_PORT")

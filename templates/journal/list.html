@@ -29,8 +29,8 @@
                     <td>{{.EntryDate.Format "02/01/2006"}}</td>
                     <td><strong>{{.Description}}</strong></td>
                     <td><code>{{.ReferenceNumber}}</code></td>
-                    <td class="c-table__num">{{printf "%,.0f" .TotalDebit}}</td>
-                    <td class="c-table__num">{{printf "%,.0f" .TotalCredit}}</td>
+                    <td class="c-table__num">{{fmtNum .TotalDebit}}</td>
+                    <td class="c-table__num">{{fmtNum .TotalCredit}}</td>
                     <td class="c-table__actions">
                         <a href="/journals/{{.ID}}/edit" class="c-btn c-btn--ghost c-btn--sm">Edit</a>
                         <button class="c-btn c-btn--ghost c-btn--sm" style="color: var(--color-error);"

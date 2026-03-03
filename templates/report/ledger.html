@@ -1,0 +1,98 @@
+{{define "title"}}Buku Besar{{end}}
+{{define "nav_ledger"}}l-sidebar__link--active{{end}}
+
+{{define "content"}}
+<div class="report-page">
+    <div class="page-header">
+        <h1 class="page-header__title">Buku Besar</h1>
+    </div>
+
+    <!-- Filter -->
+    <div class="report-filter">
+        <form method="GET" action="/reports/ledger" class="report-filter__form">
+            <div class="c-form-field">
+                <label class="c-form-field__label" for="account_id">Akun</label>
+                <select id="account_id" name="account_id" class="c-form-field__select" required>
+                    <option value="">— Pilih Akun —</option>
+                    {{range .Accounts}}
+                    <option value="{{.ID}}" {{if eq (printf "%d" .ID) $.AccountID}}selected{{end}}>
+                        {{.Code}} — {{.Name}}
+                    </option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="c-form-field">
+                <label class="c-form-field__label" for="date_from">Dari</label>
+                <input type="date" id="date_from" name="date_from" class="c-form-field__input" value="{{.DateFrom}}">
+            </div>
+            <div class="c-form-field">
+                <label class="c-form-field__label" for="date_to">Sampai</label>
+                <input type="date" id="date_to" name="date_to" class="c-form-field__input" value="{{.DateTo}}">
+            </div>
+            <div class="report-filter__actions">
+                <button type="submit" class="c-btn c-btn--primary">Tampilkan</button>
+            </div>
+        </form>
+    </div>
+
+    {{if .Report}}
+    <!-- Report Header -->
+    <div class="report-header">
+        <div class="report-header__info">
+            <h2>{{.Report.AccountCode}} — {{.Report.AccountName}}</h2>
+            <p class="report-header__period">Periode: {{.Report.DateFrom}} s/d {{.Report.DateTo}}</p>
+        </div>
+    </div>
+
+    {{if .Report.Entries}}
+    <div class="c-table-wrap">
+        <table class="c-table">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Ref</th>
+                    <th>Keterangan</th>
+                    <th class="c-table__num">Debit</th>
+                    <th class="c-table__num">Kredit</th>
+                    <th class="c-table__num">Saldo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Report.Entries}}
+                <tr>
+                    <td>{{.Date.Format "02/01/2006"}}</td>
+                    <td><code>{{.ReferenceNumber}}</code></td>
+                    <td>{{.Description}}</td>
+                    <td class="c-table__num">{{if gtf .Debit}}{{fmtNum .Debit}}{{else}}-{{end}}</td>
+                    <td class="c-table__num">{{if gtf .Credit}}{{fmtNum .Credit}}{{else}}-{{end}}</td>
+                    <td class="c-table__num"><strong>{{fmtNum .Balance}}</strong></td>
+                </tr>
+                {{end}}
+            </tbody>
+            <tfoot>
+                <tr class="report-total-row">
+                    <td colspan="3" style="text-align: right;"><strong>Total</strong></td>
+                    <td class="c-table__num"><strong>{{fmtNum .Report.TotalDebit}}</strong></td>
+                    <td class="c-table__num"><strong>{{fmtNum .Report.TotalCredit}}</strong></td>
+                    <td class="c-table__num"><strong>{{fmtNum .Report.EndBalance}}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{else}}
+    <div class="c-empty-state">
+        <div class="c-empty-state__icon">📊</div>
+        <p class="c-empty-state__text">Tidak ada transaksi untuk akun ini pada periode tersebut.</p>
+    </div>
+    {{end}}
+
+    {{else if .AccountID}}
+    <div class="c-alert c-alert--info">Pilih akun untuk melihat buku besar.</div>
+    {{else}}
+    <div class="c-empty-state">
+        <div class="c-empty-state__icon">📊</div>
+        <p class="c-empty-state__text">Pilih akun di filter atas untuk melihat buku besar.</p>
+    </div>
+    {{end}}
+</div>
+{{end}}

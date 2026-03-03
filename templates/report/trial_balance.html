@@ -1,0 +1,66 @@
+{{define "title"}}Neraca Saldo{{end}}
+{{define "nav_trial_balance"}}l-sidebar__link--active{{end}}
+
+{{define "content"}}
+<div class="report-page">
+    <div class="page-header">
+        <h1 class="page-header__title">Neraca Saldo</h1>
+    </div>
+
+    {{if .TrialBalance.Rows}}
+    <div class="c-table-wrap">
+        <table class="c-table">
+            <thead>
+                <tr>
+                    <th>Kode</th>
+                    <th>Nama Akun</th>
+                    <th>Tipe</th>
+                    <th class="c-table__num">Debit</th>
+                    <th class="c-table__num">Kredit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .TrialBalance.Rows}}
+                <tr>
+                    <td><code>{{.AccountCode}}</code></td>
+                    <td>{{.AccountName}}</td>
+                    <td>
+                        <span class="c-badge c-badge--{{.AccountType}}">
+                            {{index $.TypeLabels .AccountType}}
+                        </span>
+                    </td>
+                    <td class="c-table__num">{{if gtf .DebitTotal}}{{fmtNum .DebitTotal}}{{else}}-{{end}}</td>
+                    <td class="c-table__num">{{if gtf .CreditTotal}}{{fmtNum .CreditTotal}}{{else}}-{{end}}
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+            <tfoot>
+                <tr class="report-total-row">
+                    <td colspan="3" style="text-align: right;"><strong>Total</strong></td>
+                    <td class="c-table__num"><strong>{{fmtNum .TrialBalance.TotalDebit}}</strong></td>
+                    <td class="c-table__num"><strong>{{fmtNum .TrialBalance.TotalCredit}}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align: right;"><strong>Status</strong></td>
+                    <td colspan="2" class="c-table__num">
+                        {{if .TrialBalance.IsBalanced}}
+                        <span class="c-badge c-badge--revenue" style="font-size: var(--font-size-sm);">✓ Seimbang</span>
+                        {{else}}
+                        <span class="c-badge c-badge--liability" style="font-size: var(--font-size-sm);">✗ Tidak
+                            Seimbang</span>
+                        {{end}}
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{else}}
+    <div class="c-empty-state">
+        <div class="c-empty-state__icon">📊</div>
+        <p class="c-empty-state__text">Belum ada transaksi jurnal. Buat jurnal terlebih dahulu untuk melihat neraca
+            saldo.</p>
+    </div>
+    {{end}}
+</div>
+{{end}}
