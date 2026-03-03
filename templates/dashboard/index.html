@@ -1,0 +1,41 @@
+{{define "title"}}Dashboard{{end}}
+{{define "nav_dashboard"}}l-sidebar__link--active{{end}}
+
+{{define "content"}}
+<div class="dashboard">
+    <div class="dashboard__header">
+        <h1 class="dashboard__title">Dashboard</h1>
+        <p class="dashboard__subtitle">Ringkasan keuangan Anda</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="dashboard__cards">
+        <div class="c-card c-card--accent-blue">
+            <div class="c-card__label">Total Aset</div>
+            <div class="c-card__value">Rp 0</div>
+        </div>
+        <div class="c-card c-card--accent-red">
+            <div class="c-card__label">Total Kewajiban</div>
+            <div class="c-card__value">Rp 0</div>
+        </div>
+        <div class="c-card c-card--accent-green">
+            <div class="c-card__label">Total Pendapatan</div>
+            <div class="c-card__value">Rp 0</div>
+        </div>
+        <div class="c-card c-card--accent-orange">
+            <div class="c-card__label">Total Beban</div>
+            <div class="c-card__value">Rp 0</div>
+        </div>
+    </div>
+
+    <!-- Recent Entries -->
+    <div class="dashboard__section">
+        <h2 class="dashboard__section-title">Jurnal Terakhir</h2>
+        <div class="c-empty-state">
+            <div class="c-empty-state__icon">📝</div>
+            <p class="c-empty-state__text">Belum ada jurnal. Buat jurnal pertama Anda!</p>
+            <a href="/journals/new" class="c-btn c-btn--primary">Buat Jurnal</a>
+        </div>
+    </div>
+</div>
+{{end}}

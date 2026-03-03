@@ -1,0 +1,9 @@
+<!-- Toast notification — included in base.html -->
+<!-- Triggered via HX-Trigger: {"showToast": {"message": "...", "type": "success|error"}} -->
+<div x-show="toast.show" x-transition:enter="c-toast--enter" x-transition:enter-start="c-toast--enter-start"
+    x-transition:enter-end="c-toast--enter-end" x-transition:leave="c-toast--leave"
+    x-transition:leave-start="c-toast--leave-start" x-transition:leave-end="c-toast--leave-end" class="c-toast"
+    :class="'c-toast--' + toast.type" @click="toast.show = false" style="display: none;">
+    <span class="c-toast__icon" x-text="toast.type === 'success' ? '✓' : toast.type === 'error' ? '✕' : 'ℹ'"></span>
+    <span class="c-toast__message" x-text="toast.message"></span>
+</div>
