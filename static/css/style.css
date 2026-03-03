@@ -7,53 +7,53 @@
 /* === CSS Variables === */
 :root {
     /* Colors — Dark theme inspired */
-    --color-bg:           #0f1117;
+    --color-bg: #0f1117;
     --color-bg-secondary: #1a1d27;
-    --color-bg-tertiary:  #242834;
-    --color-bg-hover:     #2a2e3a;
-    --color-surface:      #1e2130;
-    --color-border:       #2e3246;
+    --color-bg-tertiary: #242834;
+    --color-bg-hover: #2a2e3a;
+    --color-surface: #1e2130;
+    --color-border: #2e3246;
     --color-border-light: #3a3f54;
 
-    --color-text:         #e4e6ef;
-    --color-text-muted:   #8b8fa3;
+    --color-text: #e4e6ef;
+    --color-text-muted: #8b8fa3;
     --color-text-heading: #f0f2f8;
 
     /* Accent Colors */
-    --color-primary:      #6366f1;
-    --color-primary-hover:#818cf8;
-    --color-primary-bg:   rgba(99, 102, 241, 0.12);
+    --color-primary: #6366f1;
+    --color-primary-hover: #818cf8;
+    --color-primary-bg: rgba(99, 102, 241, 0.12);
 
-    --color-success:      #10b981;
-    --color-success-bg:   rgba(16, 185, 129, 0.12);
-    --color-error:        #ef4444;
-    --color-error-bg:     rgba(239, 68, 68, 0.12);
-    --color-warning:      #f59e0b;
-    --color-warning-bg:   rgba(245, 158, 11, 0.12);
-    --color-info:         #3b82f6;
-    --color-info-bg:      rgba(59, 130, 246, 0.12);
+    --color-success: #10b981;
+    --color-success-bg: rgba(16, 185, 129, 0.12);
+    --color-error: #ef4444;
+    --color-error-bg: rgba(239, 68, 68, 0.12);
+    --color-warning: #f59e0b;
+    --color-warning-bg: rgba(245, 158, 11, 0.12);
+    --color-info: #3b82f6;
+    --color-info-bg: rgba(59, 130, 246, 0.12);
 
     /* Card accent colors */
-    --color-accent-blue:   #3b82f6;
-    --color-accent-red:    #ef4444;
-    --color-accent-green:  #10b981;
+    --color-accent-blue: #3b82f6;
+    --color-accent-red: #ef4444;
+    --color-accent-green: #10b981;
     --color-accent-orange: #f59e0b;
 
     /* Typography */
-    --font-family:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-size-xs:  0.75rem;
-    --font-size-sm:  0.8125rem;
-    --font-size-md:  0.875rem;
-    --font-size-lg:  1rem;
-    --font-size-xl:  1.25rem;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.8125rem;
+    --font-size-md: 0.875rem;
+    --font-size-lg: 1rem;
+    --font-size-xl: 1.25rem;
     --font-size-2xl: 1.5rem;
     --font-size-3xl: 2rem;
 
-    --font-weight-light:    300;
-    --font-weight-regular:  400;
-    --font-weight-medium:   500;
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
     --font-weight-semibold: 600;
-    --font-weight-bold:     700;
+    --font-weight-bold: 700;
 
     /* Spacing */
     --space-1: 0.25rem;
@@ -73,10 +73,10 @@
     --radius-xl: 16px;
 
     /* Shadows */
-    --shadow-sm:  0 1px 2px rgba(0,0,0,0.3);
-    --shadow-md:  0 4px 6px rgba(0,0,0,0.3);
-    --shadow-lg:  0 10px 15px rgba(0,0,0,0.3);
-    --shadow-xl:  0 20px 25px rgba(0,0,0,0.3);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3);
 
     /* Transitions */
     --transition-fast: 150ms ease;
@@ -124,13 +124,21 @@ a:hover {
     color: var(--color-primary-hover);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     color: var(--color-text-heading);
     font-weight: var(--font-weight-semibold);
     line-height: 1.3;
 }
 
-input, select, textarea, button {
+input,
+select,
+textarea,
+button {
     font-family: inherit;
     font-size: inherit;
 }
@@ -418,10 +426,21 @@ input, select, textarea, button {
     height: 3px;
 }
 
-.c-card--accent-blue::before   { background: var(--color-accent-blue); }
-.c-card--accent-red::before    { background: var(--color-accent-red); }
-.c-card--accent-green::before  { background: var(--color-accent-green); }
-.c-card--accent-orange::before { background: var(--color-accent-orange); }
+.c-card--accent-blue::before {
+    background: var(--color-accent-blue);
+}
+
+.c-card--accent-red::before {
+    background: var(--color-accent-red);
+}
+
+.c-card--accent-green::before {
+    background: var(--color-accent-green);
+}
+
+.c-card--accent-orange::before {
+    background: var(--color-accent-orange);
+}
 
 .c-card__label {
     font-size: var(--font-size-sm);
@@ -603,21 +622,26 @@ input, select, textarea, button {
 .c-toast--enter {
     transition: all var(--transition-slow);
 }
+
 .c-toast--enter-start {
     opacity: 0;
     transform: translateX(100%);
 }
+
 .c-toast--enter-end {
     opacity: 1;
     transform: translateX(0);
 }
+
 .c-toast--leave {
     transition: all var(--transition-slow);
 }
+
 .c-toast--leave-start {
     opacity: 1;
     transform: translateX(0);
 }
+
 .c-toast--leave-end {
     opacity: 0;
     transform: translateX(100%);
@@ -692,12 +716,35 @@ input, select, textarea, button {
     line-height: 1;
 }
 
-.c-badge--asset     { background: var(--color-info-bg);    color: var(--color-info); }
-.c-badge--liability { background: var(--color-error-bg);   color: var(--color-error); }
-.c-badge--equity    { background: var(--color-warning-bg); color: var(--color-warning); }
-.c-badge--revenue   { background: var(--color-success-bg); color: var(--color-success); }
-.c-badge--expense   { background: var(--color-error-bg);   color: var(--color-error); }
-.c-badge--cogs      { background: var(--color-warning-bg); color: var(--color-warning); }
+.c-badge--asset {
+    background: var(--color-info-bg);
+    color: var(--color-info);
+}
+
+.c-badge--liability {
+    background: var(--color-error-bg);
+    color: var(--color-error);
+}
+
+.c-badge--equity {
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+}
+
+.c-badge--revenue {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+}
+
+.c-badge--expense {
+    background: var(--color-error-bg);
+    color: var(--color-error);
+}
+
+.c-badge--cogs {
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+}
 
 
 /* ============================================
@@ -752,6 +799,44 @@ input, select, textarea, button {
 .page-header__actions {
     display: flex;
     gap: var(--space-3);
+}
+
+
+/* ============================================
+   FEATURE: Account
+   ============================================ */
+.account-list__desc {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+}
+
+.account-form__card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    max-width: 600px;
+}
+
+.account-form__actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+}
+
+code {
+    background: var(--color-bg-tertiary);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--color-primary);
 }
 
 

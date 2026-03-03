@@ -1,0 +1,69 @@
+{{define "title"}}{{if .IsEdit}}Edit Akun{{else}}Tambah Akun{{end}}{{end}}
+{{define "nav_accounts"}}l-sidebar__link--active{{end}}
+
+{{define "content"}}
+<div class="account-form">
+    <div class="page-header">
+        <h1 class="page-header__title">{{if .IsEdit}}Edit Akun{{else}}Tambah Akun Baru{{end}}</h1>
+        <div class="page-header__actions">
+            <a href="/accounts" class="c-btn c-btn--secondary">← Kembali</a>
+        </div>
+    </div>
+
+    {{if .Error}}
+    <div class="c-alert c-alert--error">{{.Error}}</div>
+    {{end}}
+
+    <div class="account-form__card">
+        <form {{if .IsEdit}} hx-put="/accounts/{{if .Account}}{{.Account.ID}}{{end}}" {{else}} hx-post="/accounts"
+            {{end}} hx-target="body" hx-swap="innerHTML" class="account-form__form">
+            <div class="c-form-field">
+                <label class="c-form-field__label" for="code">Kode Akun *</label>
+                <input type="text" id="code" name="code" class="c-form-field__input" placeholder="Contoh: 1100"
+                    value="{{if .IsEdit}}{{.Account.Code}}{{else}}{{if .Account}}{{.Account.Code}}{{end}}{{end}}"
+                    required maxlength="10">
+            </div>
+
+            <div class="c-form-field">
+                <label class="c-form-field__label" for="name">Nama Akun *</label>
+                <input type="text" id="name" name="name" class="c-form-field__input" placeholder="Contoh: Kas"
+                    value="{{if .IsEdit}}{{.Account.Name}}{{else}}{{if .Account}}{{.Account.Name}}{{end}}{{end}}"
+                    required maxlength="255">
+            </div>
+
+            <div class="c-form-field">
+                <label class="c-form-field__label" for="type">Tipe Akun *</label>
+                <select id="type" name="type" class="c-form-field__select" required>
+                    <option value="">— Pilih Tipe —</option>
+                    {{range .Types}}
+                    <option value="{{.}}" {{if $.IsEdit}}{{if eq . $.Account.Type}}selected{{end}}{{end}}>{{index
+                        $.TypeLabels .}}</option>
+                    {{end}}
+                </select>
+            </div>
+
+            <div class="c-form-field">
+                <label class="c-form-field__label" for="description">Keterangan</label>
+                <textarea id="description" name="description" class="c-form-field__textarea" rows="3"
+                    placeholder="Deskripsi akun (opsional)">{{if .IsEdit}}{{.Account.Description}}{{else}}{{if .Account}}{{.Account.Description}}{{end}}{{end}}</textarea>
+            </div>
+
+            {{if .IsEdit}}
+            <div class="c-form-field">
+                <label class="c-form-field__label">
+                    <input type="checkbox" name="is_active" {{if .Account.IsActive}}checked{{end}}>
+                    Akun Aktif
+                </label>
+            </div>
+            {{end}}
+
+            <div class="account-form__actions">
+                <button type="submit" class="c-btn c-btn--primary">
+                    {{if .IsEdit}}Simpan Perubahan{{else}}Tambah Akun{{end}}
+                </button>
+                <a href="/accounts" class="c-btn c-btn--secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}

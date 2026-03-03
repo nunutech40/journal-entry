@@ -10,6 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 
+	"journal-entry/internal/account"
 	"journal-entry/internal/server"
 )
 
@@ -30,8 +31,13 @@ func main() {
 	// Parse all HTML templates at startup (fail fast)
 	templates := server.ParseTemplates()
 
+	// Wire dependencies: Repository → Service → Handler
+	accountRepo := account.NewRepository(pool)
+	accountSvc := account.NewService(accountRepo)
+	accountHandler := account.NewHandler(accountSvc, templates)
+
 	// Create router with all routes
-	router := server.NewRouter(templates)
+	router := server.NewRouter(templates, accountHandler)
 
 	// Get port from env
 	port := os.Getenv("APP_PORT")

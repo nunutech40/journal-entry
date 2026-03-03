@@ -9,11 +9,12 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"journal-entry/internal/account"
 	"journal-entry/internal/shared/middleware"
 )
 
 // NewRouter creates and configures the chi router with all routes.
-func NewRouter(templates map[string]*template.Template) http.Handler {
+func NewRouter(templates map[string]*template.Template, accountHandler *account.Handler) http.Handler {
 	r := chi.NewRouter()
 
 	// Global middleware
@@ -42,10 +43,12 @@ func NewRouter(templates map[string]*template.Template) http.Handler {
 		}
 	})
 
-	// Future routes will be registered here:
-	// r.Route("/accounts", func(r chi.Router) { ... })
-	// r.Route("/journals", func(r chi.Router) { ... })
-	// r.Route("/reports", func(r chi.Router) { ... })
+	// Account routes
+	accountHandler.RegisterRoutes(r)
+
+	// Future routes:
+	// journalHandler.RegisterRoutes(r)
+	// reportHandler.RegisterRoutes(r)
 
 	return r
 }
@@ -70,9 +73,9 @@ func ParseTemplates() map[string]*template.Template {
 	// Page templates — each one is a full page that defines "content" block
 	pageTemplates := []string{
 		"templates/dashboard/index.html",
-		// Future pages will be added here:
-		// "templates/account/list.html",
-		// "templates/account/form.html",
+		"templates/account/list.html",
+		"templates/account/form.html",
+		// Future pages:
 		// "templates/journal/list.html",
 		// "templates/journal/form.html",
 		// "templates/report/ledger.html",

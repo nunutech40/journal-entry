@@ -1,0 +1,65 @@
+{{define "title"}}Daftar Akun{{end}}
+{{define "nav_accounts"}}l-sidebar__link--active{{end}}
+
+{{define "content"}}
+<div class="account-list">
+    <div class="page-header">
+        <h1 class="page-header__title">Daftar Akun</h1>
+        <div class="page-header__actions">
+            <a href="/accounts/new" class="c-btn c-btn--primary">
+                + Tambah Akun
+            </a>
+        </div>
+    </div>
+
+    {{if .Accounts}}
+    <div class="c-table-wrap">
+        <table class="c-table" id="account-table">
+            <thead>
+                <tr>
+                    <th>Kode</th>
+                    <th>Nama Akun</th>
+                    <th>Tipe</th>
+                    <th>Status</th>
+                    <th>Keterangan</th>
+                    <th class="c-table__actions">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="account-table-body">
+                {{range .Accounts}}
+                <tr id="account-row-{{.ID}}">
+                    <td><code>{{.Code}}</code></td>
+                    <td><strong>{{.Name}}</strong></td>
+                    <td>
+                        <span class="c-badge c-badge--{{.Type}}">
+                            {{index $.TypeLabels .Type}}
+                        </span>
+                    </td>
+                    <td>
+                        {{if .IsActive}}
+                        <span class="c-badge c-badge--revenue">Aktif</span>
+                        {{else}}
+                        <span class="c-badge c-badge--expense">Nonaktif</span>
+                        {{end}}
+                    </td>
+                    <td class="account-list__desc">{{.Description}}</td>
+                    <td class="c-table__actions">
+                        <a href="/accounts/{{.ID}}/edit" class="c-btn c-btn--ghost c-btn--sm">Edit</a>
+                        <button class="c-btn c-btn--ghost c-btn--sm" style="color: var(--color-error);"
+                            hx-delete="/accounts/{{.ID}}" hx-target="#account-row-{{.ID}}" hx-swap="outerHTML swap:0.3s"
+                            hx-confirm="Yakin ingin menghapus akun {{.Name}}?">Hapus</button>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+    {{else}}
+    <div class="c-empty-state">
+        <div class="c-empty-state__icon">📊</div>
+        <p class="c-empty-state__text">Belum ada akun. Tambahkan akun pertama Anda!</p>
+        <a href="/accounts/new" class="c-btn c-btn--primary">+ Tambah Akun</a>
+    </div>
+    {{end}}
+</div>
+{{end}}

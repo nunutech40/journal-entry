@@ -26,3 +26,4 @@ Thumbs.db
 *.test
 *.out
 coverage.html
+web
