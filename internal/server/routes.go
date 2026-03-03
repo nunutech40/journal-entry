@@ -45,6 +45,20 @@ func NewRouter(templates map[string]*template.Template, accountHandler *account.
 	// Report routes
 	reportHandler.RegisterRoutes(r)
 
+	// Custom 404 handler
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		tmpl, ok := templates["error/404.html"]
+		if !ok {
+			http.Error(w, "404 Not Found", http.StatusNotFound)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusNotFound)
+		if err := tmpl.ExecuteTemplate(w, "base", nil); err != nil {
+			log.Printf("[RENDER ERROR] 404: %v", err)
+		}
+	})
+
 	return r
 }
 
@@ -74,6 +88,8 @@ func ParseTemplates() map[string]*template.Template {
 		"templates/journal/form.html",
 		"templates/report/ledger.html",
 		"templates/report/trial_balance.html",
+		"templates/error/404.html",
+		"templates/error/500.html",
 	}
 
 	funcMap := template.FuncMap{
