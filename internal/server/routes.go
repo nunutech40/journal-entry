@@ -11,13 +11,14 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"journal-entry/internal/account"
+	"journal-entry/internal/dashboard"
 	"journal-entry/internal/journal"
 	"journal-entry/internal/report"
 	"journal-entry/internal/shared/middleware"
 )
 
 // NewRouter creates and configures the chi router with all routes.
-func NewRouter(templates map[string]*template.Template, accountHandler *account.Handler, journalHandler *journal.Handler, reportHandler *report.Handler) http.Handler {
+func NewRouter(templates map[string]*template.Template, accountHandler *account.Handler, journalHandler *journal.Handler, reportHandler *report.Handler, dashboardHandler *dashboard.Handler) http.Handler {
 	r := chi.NewRouter()
 
 	// Global middleware
@@ -33,18 +34,7 @@ func NewRouter(templates map[string]*template.Template, accountHandler *account.
 	// === Routes ===
 
 	// Dashboard (home)
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, ok := templates["dashboard/index.html"]
-		if !ok {
-			http.Error(w, "Template not found", http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := tmpl.ExecuteTemplate(w, "base", nil); err != nil {
-			log.Printf("[RENDER ERROR] dashboard: %v", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		}
-	})
+	r.Get("/", dashboardHandler.HandleDashboard)
 
 	// Account routes
 	accountHandler.RegisterRoutes(r)

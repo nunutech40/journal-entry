@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"journal-entry/internal/account"
+	"journal-entry/internal/dashboard"
 	"journal-entry/internal/journal"
 	"journal-entry/internal/report"
 	"journal-entry/internal/server"
@@ -46,8 +47,10 @@ func main() {
 	reportSvc := report.NewService(reportRepo, accountRepo)
 	reportHandler := report.NewHandler(reportSvc, accountSvc, templates)
 
+	dashboardHandler := dashboard.NewHandler(reportSvc, journalSvc, templates)
+
 	// Create router with all routes
-	router := server.NewRouter(templates, accountHandler, journalHandler, reportHandler)
+	router := server.NewRouter(templates, accountHandler, journalHandler, reportHandler, dashboardHandler)
 
 	// Get port from env
 	port := os.Getenv("APP_PORT")
